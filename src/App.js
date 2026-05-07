@@ -319,7 +319,8 @@ const onSvgPM=e=>{
     const TH=familyTitle?70:0;
     const titleSVG=familyTitle?`<text x="${mnx+W/2}" y="${mny+44}" text-anchor="middle" font-size="52" fill="#5c3210" font-family="'Cinzel','Palatino Linotype',serif" font-weight="700" letter-spacing="8" opacity="0.95">${familyTitle.replace(/&/g,"&amp;")}</text><line x1="${mnx+W/2-160}" y1="${mny+56}" x2="${mnx+W/2-18}" y2="${mny+56}" stroke="#92400e" stroke-width="1" opacity="0.7"/><polygon points="${mnx+W/2},${mny+50} ${mnx+W/2+8},${mny+56} ${mnx+W/2},${mny+62} ${mnx+W/2-8},${mny+56}" fill="#92400e" opacity="0.8"/><line x1="${mnx+W/2+18}" y1="${mny+56}" x2="${mnx+W/2+160}" y2="${mny+56}" stroke="#92400e" stroke-width="1" opacity="0.7"/>`:"";
     // 家紋・家訓領域（下部中央）
-const crestSize=160;
+const hasCrest=!!familyCrest,hasMotto=!!familyMotto;
+    const crestSize=160;
     const BH=hasCrest&&hasMotto?260:hasCrest?200:hasMotto?100:0;
     const bottomY=mny+H+TH;
     const crestSVG=hasCrest?`<image href="${familyCrest}" x="${mnx+W/2-crestSize/2}" y="${bottomY+20}" width="${crestSize}" height="${crestSize}" preserveAspectRatio="xMidYMid meet"/>`:"";
@@ -338,7 +339,8 @@ const crestSize=160;
   const doImg=type=>{
     const{s,W,H}=buildSVG();
     const SC=type==="png"?2:1;
-    const svgB64="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(s)));
+    const svgBlob=new Blob([s],{type:"image/svg+xml;charset=utf-8"});
+    const svgUrl=URL.createObjectURL(svgBlob);
     const cv=document.createElement("canvas");
     cv.width=W*SC;cv.height=H*SC;
     const ctx=cv.getContext("2d");
@@ -354,7 +356,7 @@ const crestSize=160;
       a.click();
     };
     img.onerror=()=>alert("PNG保存に失敗しました。");
-    img.src=svgB64;
+    img.src=svgUrl;
   };
 
   const IS={width:"100%",background:"#0f0601",border:"1px solid #78350f",color:"#fef3c7",padding:"8px",borderRadius:4,fontSize:13,fontFamily:"serif",boxSizing:"border-box"};
