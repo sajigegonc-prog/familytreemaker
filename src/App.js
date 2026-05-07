@@ -934,7 +934,7 @@ function App() {
           c.deceased
             ? `<ellipse cx="0" cy="${OV_CY}" rx="${OV_RX}" ry="${OV_RY}" fill="#111827" opacity="0.4"/>`
             : ""
-        }< image href="${FRAME_SRC}" x="${-FW / 2}" y="${
+        }<image href="${FRAME_SRC}" x="${-FW / 2}" y="${
           -FH / 2
         }" width="${FW}" height="${FH}" style="filter:${gf}"/>${
           c.disinherited
@@ -994,39 +994,45 @@ function App() {
           }</div>`
         : "";
     return {
-      s: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${mnx} ${mny} ${W} ${H}" width="${W}" height="${H}" style="background:url(${BG_SRC}) center/cover"><defs/>${ls}${ms}${ns}</svg>`,
+      s: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${mnx} ${mny} ${W} ${H}" width="${W}" height="${H}" style="background:url(${BG_SRC}) center/contain repeat"><defs/>${ls}${ms}${ns}</svg>`,
       W,
       H,
       familySec,
+      mnx,
+      mny,
     };
   };
 
   const doHTML = () => {
-    const { s, familySec } = buildSVG();
-    const html = `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Wizard Family Chronicle</title><style>body{margin:0;background:#f5edd8;font-family:serif;}.tt{position:fixed;background:rgba(18,6,0,.92);color:#fef3c7;padding:8px 12px;border-radius:8px;font-size:12px;max-width:220px;pointer-events:none;display:none;border:1px solid #92400e;z-index:10;}</style></head><body>${s}${familySec}<div class="tt" id="tt"></div><script>document.querySelectorAll("[data-desc]").forEach(el=>{const tt=document.getElementById("tt"),d=el.getAttribute("data-desc");if(!d)return;el.addEventListener("mouseenter",()=>{tt.textContent=d;tt.style.display="block";});el.addEventListener("mousemove",e=>{tt.style.left=(e.clientX+14)+"px";tt.style.top=(e.clientY+14)+"px";});el.addEventListener("mouseleave",()=>{tt.style.display="none";});});<\/script></body></html>`;
+    const { s, W, H, familySec, mnx, mny } = buildSVG();
+    const svgFull = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${mnx} ${mny} ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block;background:url(${BG_SRC}) center/cover no-repeat"><defs/>${s
+      .replace(/^<svg[^>]*>/, "")
+      .replace(/<\/svg>$/, "")}</svg>`;
+    const html = `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wizard Family Chronicle</title><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:#f5edd8;font-family:serif;}#wrap{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}svg{max-width:100%;max-height:100%;}.tt{position:fixed;background:rgba(18,6,0,.92);color:#fef3c7;padding:8px 12px;border-radius:8px;font-size:12px;max-width:220px;pointer-events:none;display:none;border:1px solid #92400e;z-index:10;}</style></head><body><div id="wrap">${s}</div>${familySec}<div class="tt" id="tt"></div><script>document.querySelectorAll("[data-desc]").forEach(el=>{const tt=document.getElementById("tt"),d=el.getAttribute("data-desc");if(!d)return;el.addEventListener("mouseenter",()=>{tt.textContent=d;tt.style.display="block";});el.addEventListener("mousemove",e=>{tt.style.left=(e.clientX+14)+"px";tt.style.top=(e.clientY+14)+"px";});el.addEventListener("mouseleave",()=>{tt.style.display="none";});});<\/script></body></html>`;
     const a = document.createElement("a");
     a.download = "family-chronicle.html";
     a.href = URL.createObjectURL(new Blob([html], { type: "text/html" }));
     a.click();
   };
   const doImg = (type) => {
-    const { s, W, H, familySec } = buildSVG();
+    const { s, W, H } = buildSVG();
     const FC = !!(familyCrest || familyMotto),
-      FH2 = FC ? 120 : 0,
+      FH2 = FC ? 140 : 0,
       SC = type === "png" ? 2 : 1;
-    const blob = new Blob([s], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
+    // SVGをBase64に変換してCanvasに描画（CORS回避のためforeign objectを使わない方式）
+    const svgStr = s;
+    const svgB64 =
+      "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgStr)));
+    const cv = document.createElement("canvas");
+    cv.width = W * SC;
+    cv.height = (H + FH2) * SC;
+    const ctx = cv.getContext("2d");
+    ctx.scale(SC, SC);
+    ctx.fillStyle = "#f5edd8";
+    ctx.fillRect(0, 0, W, H + FH2);
     const img = new Image();
     img.onload = () => {
-      const cv = document.createElement("canvas");
-      cv.width = W * SC;
-      cv.height = (H + FH2) * SC;
-      const ctx = cv.getContext("2d");
-      ctx.scale(SC, SC);
-      ctx.fillStyle = "#f5edd8";
-      ctx.fillRect(0, 0, W, H + FH2);
       ctx.drawImage(img, 0, 0, W, H);
-      URL.revokeObjectURL(url);
       const fin = () => {
         const a = document.createElement("a");
         a.download = `family-chronicle.${type === "jpeg" ? "jpg" : "png"}`;
@@ -1043,15 +1049,14 @@ function App() {
         ctx.moveTo(40, H + 10);
         ctx.lineTo(W - 40, H + 10);
         ctx.stroke();
-        let tx = 40;
         if (familyCrest) {
           const ci = new Image();
           ci.onload = () => {
-            ctx.drawImage(ci, 40, H + 20, 80, 80);
+            ctx.drawImage(ci, 40, H + 20, 100, 100);
             if (familyMotto) {
               ctx.fillStyle = "#78350f";
-              ctx.font = "italic 18px serif";
-              ctx.fillText(`「${familyMotto}」`, 130, H + 66);
+              ctx.font = "italic 20px serif";
+              ctx.fillText(`「${familyMotto}」`, 150, H + 76);
             }
             fin();
           };
@@ -1059,14 +1064,18 @@ function App() {
         } else {
           if (familyMotto) {
             ctx.fillStyle = "#78350f";
-            ctx.font = "italic 18px serif";
-            ctx.fillText(`「${familyMotto}」`, 40, H + 66);
+            ctx.font = "italic 20px serif";
+            ctx.fillText(`「${familyMotto}」`, 40, H + 76);
           }
           fin();
         }
       } else fin();
     };
-    img.src = url;
+    img.onerror = () =>
+      alert(
+        "PNG保存に失敗しました。ブラウザの制限によりデータURIが使えない場合があります。"
+      );
+    img.src = svgB64;
   };
 
   const IS = {
@@ -1309,7 +1318,8 @@ function App() {
           height="100%"
           style={{
             backgroundImage: `url(${BG_SRC})`,
-            backgroundSize: "cover",
+            backgroundSize: "contain",
+            backgroundRepeat: "repeat",
             display: "block",
             touchAction: "none",
           }}
