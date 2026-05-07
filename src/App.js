@@ -155,15 +155,19 @@ function App() {
   // ── SVG pointer handlers ─────────────────────────────────
   // Nodes do stopPropagation on their own pointerDown → SVG only sees background taps
   // Except nodes' transparent oval does NOT stopPropagation → SVG sees it for drag
-  const onSvgPD=e=>{
+const onSvgPD=e=>{
     if(e.cancelable)e.preventDefault();
-    if(e.touches?.length>=2){
-      pinchRef.current={dist:Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY),s:scaleR.current};
-      return;
+    svgRef.current?.setPointerCapture?.(e.pointerId);
+    const activePointers=(pinchRef.current?.pointers||[]).filter(p=>p.id!==e.pointerId);
+    activePointers.push({id:e.pointerId,x:e.clientX,y:e.clientY});
+    if(activePointers.length>=2){
+      const [a,b]=activePointers;
+      pinchRef.current={pointers:activePointers,dist:Math.hypot(a.x-b.x,a.y-b.y),s:scaleR.current};
+      ptrRef.current=null;return;
     }
+    pinchRef.current={pointers:activePointers};
     const cx=e.clientX,cy=e.clientY;
     const w=svgXY(cx,cy);
-    // Check if we hit a char node
     const hit=[...charsR.current].reverse().find(c=>{
       const dx=c.x-w.x,dy=(c.y+OV_CY)-w.y;
       return dx*dx/(60*60)+dy*dy/(60*60)<=1;
@@ -173,15 +177,23 @@ function App() {
     } else {
       ptrRef.current={kind:"pan",sx:cx,sy:cy,px:panR.current.x,py:panR.current.y};
     }
-    if(hit)svgRef.current?.setPointerCapture?.(e.pointerId);
   };
 
-  const onSvgPM=e=>{
+const onSvgPM=e=>{
     if(e.cancelable)e.preventDefault();
-    if(e.touches?.length>=2&&pinchRef.current){
-      const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
-      const ns=Math.min(3,Math.max(0.2,pinchRef.current.s*(d/pinchRef.current.dist)));
-      setScale(ns);scaleR.current=ns;return;
+    if(pinchRef.current?.dist){
+      const pointers=pinchRef.current.pointers.map(p=>p.id===e.pointerId?{id:e.pointerId,x:e.clientX,y:e.clientY}:p);
+      pinchRef.current={...pinchRef.current,pointers};
+      if(pointers.length>=2){
+        const [a,b]=pointers;
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        const ns=Math.min(3,Math.max(0.2,pinchRef.current.s*(d/pinchRef.current.dist)));
+        setScale(ns);scaleR.current=ns;
+      }
+      return;
+    }
+    if(pinchRef.current&&!pinchRef.current.dist){
+      pinchRef.current.pointers=pinchRef.current.pointers.map(p=>p.id===e.pointerId?{id:e.pointerId,x:e.clientX,y:e.clientY}:p);
     }
     const p=ptrRef.current;if(!p)return;
     const cx=e.clientX,cy=e.clientY;
@@ -199,7 +211,10 @@ function App() {
 
   const onSvgPU=e=>{
     const p=ptrRef.current;
-    ptrRef.current=null;pinchRef.current=null;
+    const pointers=(pinchRef.current?.pointers||[]).filter(p=>p.id!==e.pointerId);
+    if(pointers.length<2)pinchRef.current=pointers.length?{pointers}:null;
+    else pinchRef.current={...pinchRef.current,pointers};
+    ptrRef.current=null;
     if(!p)return;
     const dist=Math.hypot(e.clientX-p.sx,e.clientY-p.sy);
     if(p.kind==="drag"&&!p.moved){
@@ -432,7 +447,7 @@ function App() {
           ?[["左右","imgX",-30,30,1],["上下","imgY",-30,30,1],["サイズ","imgScale",0.5,2,0.05]]
           :[["左右","burnX",-40,40,1],["上下","burnY",-40,40,1],["サイズ","burnScale",0.3,2.5,0.05]];
         return(
-          <div style={{position:"fixed",top:60,right:12,width:220,background:"linear-gradient(180deg,#2d1206,#180900)",border:`2px solid ${isImg?"#92400e":"#7f1d1d"}`,borderRadius:12,padding:"12px 14px",zIndex:500,boxShadow:"0 4px 24px rgba(0,0,0,.7)"}}>
+          <div onPointerDown={e=>e.stopPropagation()} onPointerMove={e=>e.stopPropagation()} style={{position:"fixed",top:60,right:12,width:220,background:"linear-gradient(180deg,#2d1206,#180900)",border:`2px solid ${isImg?"#92400e":"#7f1d1d"}`,borderRadius:12,padding:"12px 14px",zIndex:500,boxShadow:"0 4px 24px rgba(0,0,0,.7)"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
               <span style={{color:isImg?"#fbbf24":"#ef4444",fontSize:12,fontWeight:700}}>{isImg?"📷 顔写真の調整":"🔥 焼け跡の調整"}</span>
               <div style={{display:"flex",gap:6}}>
