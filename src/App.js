@@ -480,7 +480,7 @@ const onSvgPM=e=>{
           </div>
         );
       })()}
-      {editId&&ed&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:200}} onClick={()=>setEditId(null)}/><div style={{position:"fixed",bottom:0,left:0,right:0,maxHeight:"82dvh",overflowY:"auto",background:"linear-gradient(180deg,#2d1206,#180900)",borderTop:"2px solid #92400e",borderRadius:"16px 16px 0 0",padding:"14px 16px 0",zIndex:201}}>
+      {editId&&ed&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:200}} onClick={()=>setEditId(null)}/><div style={{position:"fixed",bottom:0,left:0,right:0,maxHeight:"82dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#2d1206,#180900)",borderTop:"2px solid #92400e",borderRadius:"16px 16px 0 0",zIndex:201}}><div style={{overflowY:"auto",flex:1,padding:"14px 16px 8px"}}>
         <div style={{width:36,height:4,background:"#78350f",borderRadius:2,margin:"0 auto 12px"}}/>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}><h2 style={{margin:0,color:"#fbbf24",fontSize:15}}>キャラクター編集</h2><button onClick={()=>setEditId(null)} style={{background:"none",border:"none",color:"#92400e",fontSize:20,cursor:"pointer"}}>✕</button></div>
         <div style={{display:"flex",gap:14,alignItems:"center",marginBottom:14}}>
@@ -526,11 +526,10 @@ const onSvgPM=e=>{
         <div style={{display:"flex",gap:16,marginTop:12,flexWrap:"wrap"}}>
           {[["故人","deceased","#d1a054"],["マグル","muggle","#d1a054"],["勘当","disinherited","#ef4444"]].map(([lb,k,col])=>(<label key={k} style={{display:"flex",alignItems:"center",gap:6,color:col,fontSize:13,cursor:"pointer"}}><input type="checkbox" checked={!!ed[k]} onChange={e=>{const v=e.target.checked;setEd(d=>({...d,[k]:v}));setChars(p=>p.map(c=>c.id===ed.id?{...c,[k]:v}:c));}} style={{accentColor:k==="disinherited"?"#dc2626":"#d97706",width:16,height:16}}/>{lb}</label>))}
         </div>
-        <div style={{display:"flex",gap:8,marginTop:16,position:"sticky",bottom:0,background:"linear-gradient(180deg,transparent,#180900 18%)",paddingTop:16,paddingBottom:8}}>
+        </div><div style={{display:"flex",gap:8,padding:"8px 16px 24px",borderTop:"1px solid #3b1a08",background:"#180900",flexShrink:0}}>
           <button onClick={saveEdit} style={{flex:1,background:"#92400e",color:"#fef3c7",border:"none",padding:"12px",borderRadius:6,cursor:"pointer",fontSize:14,fontWeight:"700"}}>保存</button>
           <button onClick={()=>delChar(ed.id)} style={{background:"none",color:"#ef4444",border:"1px solid #ef4444",padding:"12px 16px",borderRadius:6,cursor:"pointer",fontSize:13}}>削除</button>
-        </div>
-      </div></>)}
+        </div></div></>)}
     </div>
   );
 }
