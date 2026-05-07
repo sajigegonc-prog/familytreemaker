@@ -319,13 +319,11 @@ const onSvgPM=e=>{
     const TH=familyTitle?70:0;
     const titleSVG=familyTitle?`<text x="${mnx+W/2}" y="${mny+44}" text-anchor="middle" font-size="52" fill="#5c3210" font-family="'Cinzel','Palatino Linotype',serif" font-weight="700" letter-spacing="8" opacity="0.95">${familyTitle.replace(/&/g,"&amp;")}</text><line x1="${mnx+W/2-160}" y1="${mny+56}" x2="${mnx+W/2-18}" y2="${mny+56}" stroke="#92400e" stroke-width="1" opacity="0.7"/><polygon points="${mnx+W/2},${mny+50} ${mnx+W/2+8},${mny+56} ${mnx+W/2},${mny+62} ${mnx+W/2-8},${mny+56}" fill="#92400e" opacity="0.8"/><line x1="${mnx+W/2+18}" y1="${mny+56}" x2="${mnx+W/2+160}" y2="${mny+56}" stroke="#92400e" stroke-width="1" opacity="0.7"/>`:"";
     // 家紋・家訓領域（下部中央）
-    const crestSize=120;
-    const hasCrest=!!familyCrest,hasMotto=!!familyMotto;
-    const BH=hasCrest&&hasMotto?260:hasCrest?160:hasMotto?100:0;
+const crestSize=160;
+    const BH=hasCrest&&hasMotto?260:hasCrest?200:hasMotto?100:0;
     const bottomY=mny+H+TH;
     const crestSVG=hasCrest?`<image href="${familyCrest}" x="${mnx+W/2-crestSize/2}" y="${bottomY+20}" width="${crestSize}" height="${crestSize}" preserveAspectRatio="xMidYMid meet"/>`:"";
-    const mottoY=hasCrest?bottomY+20+crestSize+30:bottomY+50;
-    const mottoSVG=hasMotto?`<text x="${mnx+W/2}" y="${mottoY}" text-anchor="middle" font-size="22" fill="#1c0e04" font-family="'Palatino Linotype','EB Garamond',serif" font-style="italic" letter-spacing="3">「${familyMotto.replace(/&/g,"&amp;")}」</text>`:"";
+    const mottoY=hasCrest?bottomY+20+crestSize+16:bottomY+50;    const mottoSVG=hasMotto?`<text x="${mnx+W/2}" y="${mottoY}" text-anchor="middle" font-size="22" fill="#1c0e04" font-family="'Palatino Linotype','EB Garamond',serif" font-style="italic" letter-spacing="3">「${familyMotto.replace(/&/g,"&amp;")}」</text>`:"";
     const totalH=H+TH+BH;
     const viewY=mny-TH;
     const bgRect=`<image href="${BG_SRC}" x="${mnx}" y="${viewY}" width="${W}" height="${totalH}" preserveAspectRatio="xMidYMid slice"/>`;
