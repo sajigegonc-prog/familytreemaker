@@ -157,7 +157,6 @@ function App() {
   // Except nodes' transparent oval does NOT stopPropagation → SVG sees it for drag
 const onSvgPD=e=>{
     if(e.cancelable)e.preventDefault();
-    svgRef.current?.setPointerCapture?.(e.pointerId);
     const activePointers=(pinchRef.current?.pointers||[]).filter(p=>p.id!==e.pointerId);
     activePointers.push({id:e.pointerId,x:e.clientX,y:e.clientY});
     if(activePointers.length>=2){
@@ -480,9 +479,9 @@ const onSvgPM=e=>{
           </div>
         );
       })()}
-      {editId&&ed&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:200}} onClick={()=>setEditId(null)}/><div style={{position:"fixed",bottom:0,left:0,right:0,maxHeight:"82dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#2d1206,#180900)",borderTop:"2px solid #92400e",borderRadius:"16px 16px 0 0",zIndex:201}}><div style={{overflowY:"auto",flex:1,padding:"14px 16px 8px"}}>
+      {editId&&ed&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:200}} onClick={()=>{const isEmpty=!ed.name&&!ed.kana&&!ed.birth&&!ed.death&&!ed.desc&&!ed.img;if(isEmpty)delChar(ed.id);setEditId(null);}}/><div style={{position:"fixed",bottom:0,left:0,right:0,maxHeight:"82dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#2d1206,#180900)",borderTop:"2px solid #92400e",borderRadius:"16px 16px 0 0",zIndex:201}}><div style={{overflowY:"auto",flex:1,padding:"14px 16px 8px"}}>
         <div style={{width:36,height:4,background:"#78350f",borderRadius:2,margin:"0 auto 12px"}}/>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}><h2 style={{margin:0,color:"#fbbf24",fontSize:15}}>キャラクター編集</h2><button onClick={()=>setEditId(null)} style={{background:"none",border:"none",color:"#92400e",fontSize:20,cursor:"pointer"}}>✕</button></div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}><h2 style={{margin:0,color:"#fbbf24",fontSize:15}}>キャラクター編集</h2><button onClick={()=>{const isEmpty=!ed.name&&!ed.kana&&!ed.birth&&!ed.death&&!ed.desc&&!ed.img;if(isEmpty)delChar(ed.id);setEditId(null);}} style={{background:"none",border:"none",color:"#92400e",fontSize:20,cursor:"pointer"}}>✕</button></div>
         <div style={{display:"flex",gap:14,alignItems:"center",marginBottom:14}}>
           <div style={{position:"relative",width:90,height:90,flexShrink:0}}>
             <div style={{position:"absolute",left:"50%",top:"50%",transform:"translate(-50%,-48%)",width:64,height:76,borderRadius:"50%",overflow:"hidden",background:"#1a0800",filter:"none"}}>{ed.img?<img src={ed.img} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,color:"#555"}}>👤</div>}</div>
@@ -516,19 +515,17 @@ const onSvgPM=e=>{
           </button>
         </>}
         <div style={{display:"flex",flexDirection:"column",gap:9}}>
-          {[["名前","name","例：藤堂ミラ"],["フリガナ","kana","Milla Tohdoh"]].map(([lb,k,ph])=>(<div key={k}><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>{lb}</label><input value={ed[k]||""} onChange={e=>setEd({...ed,[k]:e.target.value})} style={IS} placeholder={ph}/></div>))}
+          {[["名前","name","例：藤堂ミラ"],["フリガナ","kana","Milla Tohdoh"]].map(([lb,k,ph])=>(<div key={k}><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>{lb}</label><input value={ed[k]||""} onChange={e=>{const v=e.target.value;setEd(d=>({...d,[k]:v}));setChars(p=>p.map(c=>c.id===ed.id?{...c,[k]:v}:c));}} style={IS} placeholder={ph}/></div>))}
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-            <div><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>生年（西暦）</label><input value={ed.birth||""} onChange={e=>setEd({...ed,birth:e.target.value})} style={IS} placeholder="1978"/></div>
-            <div><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>没年（故人のみ）</label><input value={ed.death||""} onChange={e=>setEd({...ed,death:e.target.value})} style={IS} placeholder="1998"/></div>
+            <div><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>生年（西暦）</label><input value={ed.birth||""} onChange={e=>{const v=e.target.value;setEd(d=>({...d,birth:v}));setChars(p=>p.map(c=>c.id===ed.id?{...c,birth:v}:c));}} style={IS} placeholder="1978"/></div>
+            <div><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>没年（故人のみ）</label><input value={ed.death||""} onChange={e=>{const v=e.target.value;setEd(d=>({...d,death:v}));setChars(p=>p.map(c=>c.id===ed.id?{...c,death:v}:c));}} style={IS} placeholder="1998"/></div>
           </div>
-          <div><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>説明文 <span style={{opacity:.6}}>（HTML保存時のみホバーで表示）</span></label><textarea value={ed.desc||""} onChange={e=>setEd({...ed,desc:e.target.value})} style={{...IS,height:60,resize:"vertical"}} placeholder="杖・役職・メモなど"/></div>
+          <div><label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:3}}>説明文 <span style={{opacity:.6}}>（HTML保存時のみホバーで表示）</span></label><textarea value={ed.desc||""} onChange={e=>{const v=e.target.value;setEd(d=>({...d,desc:v}));setChars(p=>p.map(c=>c.id===ed.id?{...c,desc:v}:c));}} style={{...IS,height:60,resize:"vertical"}} placeholder="杖・役職・メモなど"/></div>
         </div>
-        <div style={{display:"flex",gap:16,marginTop:12,flexWrap:"wrap"}}>
+        <div style={{display:"flex",gap:16,marginTop:12,flexWrap:"wrap",alignItems:"center"}}>
           {[["故人","deceased","#d1a054"],["マグル","muggle","#d1a054"],["勘当","disinherited","#ef4444"]].map(([lb,k,col])=>(<label key={k} style={{display:"flex",alignItems:"center",gap:6,color:col,fontSize:13,cursor:"pointer"}}><input type="checkbox" checked={!!ed[k]} onChange={e=>{const v=e.target.checked;setEd(d=>({...d,[k]:v}));setChars(p=>p.map(c=>c.id===ed.id?{...c,[k]:v}:c));}} style={{accentColor:k==="disinherited"?"#dc2626":"#d97706",width:16,height:16}}/>{lb}</label>))}
+          <button onClick={()=>{delChar(ed.id);setEditId(null);}} style={{marginLeft:"auto",background:"none",color:"#ef4444",border:"1px solid #ef4444",padding:"6px 12px",borderRadius:6,cursor:"pointer",fontSize:12}}>削除</button>
         </div>
-        </div><div style={{display:"flex",gap:8,padding:"8px 16px 24px",borderTop:"1px solid #3b1a08",background:"#180900",flexShrink:0}}>
-          <button onClick={saveEdit} style={{flex:1,background:"#92400e",color:"#fef3c7",border:"none",padding:"12px",borderRadius:6,cursor:"pointer",fontSize:14,fontWeight:"700"}}>保存</button>
-          <button onClick={()=>delChar(ed.id)} style={{background:"none",color:"#ef4444",border:"1px solid #ef4444",padding:"12px 16px",borderRadius:6,cursor:"pointer",fontSize:13}}>削除</button>
         </div></div></>)}
     </div>
   );
