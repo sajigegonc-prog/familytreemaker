@@ -480,7 +480,7 @@ const onSvgPM=e=>{
           </div>
         );
       })()}
-      {editId&&ed&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:200}} onClick={()=>setEditId(null)}/><div style={{position:"fixed",bottom:0,left:0,right:0,maxHeight:"82dvh",overflowY:"auto",background:"linear-gradient(180deg,#2d1206,#180900)",borderTop:"2px solid #92400e",borderRadius:"16px 16px 0 0",padding:"14px 16px 32px",zIndex:201}}>
+      {editId&&ed&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:200}} onClick={()=>setEditId(null)}/><div style={{position:"fixed",bottom:0,left:0,right:0,maxHeight:"82dvh",overflowY:"auto",background:"linear-gradient(180deg,#2d1206,#180900)",borderTop:"2px solid #92400e",borderRadius:"16px 16px 0 0",padding:"14px 16px 0",zIndex:201}}>
         <div style={{width:36,height:4,background:"#78350f",borderRadius:2,margin:"0 auto 12px"}}/>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}><h2 style={{margin:0,color:"#fbbf24",fontSize:15}}>キャラクター編集</h2><button onClick={()=>setEditId(null)} style={{background:"none",border:"none",color:"#92400e",fontSize:20,cursor:"pointer"}}>✕</button></div>
         <div style={{display:"flex",gap:14,alignItems:"center",marginBottom:14}}>
