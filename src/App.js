@@ -471,7 +471,9 @@ const onSvgPM=e=>{
                   </div>
                   <input type="range" min={mn} max={mx} step={st} value={val}
                     onChange={e=>{const v=parseFloat(e.target.value);setChars(p=>p.map(c=>c.id===ac.id?{...c,[k]:v}:c));}}
-                    style={{width:"100%",accentColor:isImg?"#d97706":"#dc2626"}}/>
+                    onTouchStart={e=>e.stopPropagation()}
+                    onTouchMove={e=>{e.stopPropagation();const r=e.currentTarget;const t=e.touches[0];const rect=r.getBoundingClientRect();const ratio=Math.min(1,Math.max(0,(t.clientX-rect.left)/rect.width));const v=parseFloat((mn+ratio*(mx-mn)).toFixed(2));setChars(p=>p.map(c=>c.id===ac.id?{...c,[k]:v}:c));}}
+                    style={{width:"100%",accentColor:isImg?"#d97706":"#dc2626",touchAction:"auto"}}/>
                 </div>
               );
             })}
