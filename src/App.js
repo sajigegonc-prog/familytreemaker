@@ -304,15 +304,15 @@ function App() {
     const ms=mids.map(m=>{const p=getMidPos(m,chars);return`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#92400e" stroke="#451a03" stroke-width="1"/><circle cx="${p.x}" cy="${p.y}" r="2.5" fill="#d97706"/>`;}).join("");
     const ns=chars.map(c=>{const gf="none";const ds=[c.birth,c.deceased&&c.death?`† ${c.death}`:""].filter(Boolean).join(" — ");const cp=`cp_${c.id}`;return`<g transform="translate(${c.x},${c.y})" data-desc="${(c.desc||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;")}"><defs><clipPath id="${cp}"><ellipse cx="0" cy="${OV_CY}" rx="${OV_RX}" ry="${OV_RY}"/></clipPath></defs><ellipse cx="0" cy="${OV_CY}" rx="${OV_RX}" ry="${OV_RY}" fill="${c.deceased?"#6b7280":"#d4b896"}" opacity="0.6"/>${c.img?`<image href="${c.img}" x="${-OV_RX+(c.imgX||0)}" y="${OV_CY-OV_RY+(c.imgY||0)}" width="${OV_RX*2*(c.imgScale||1)}" height="${OV_RY*2*(c.imgScale||1)}" clip-path="url(#${cp})" preserveAspectRatio="xMidYMid slice" style="filter:${gf}"/>`:""}${c.deceased?`<ellipse cx="0" cy="${OV_CY}" rx="${OV_RX}" ry="${OV_RY}" fill="#111827" opacity="0.4"/>`:""}<image href="${FRAME_SRC}" x="${-FW/2}" y="${-FH/2}" width="${FW}" height="${FH}" style="filter:${gf}"/>${c.disinherited?`<image href="${c.disStyle==="ink"?INK_SRC:BURN_SRC}" x="${-(FW/2)*(c.burnScale||1)+(c.burnX||0)}" y="${-(FH/2)*(c.burnScale||1)+(c.burnY||0)}" width="${FW*(c.burnScale||1)}" height="${FH*(c.burnScale||1)}" preserveAspectRatio="xMidYMid meet"/>`:""}${c.muggle?`<rect x="-20" y="${FH/2-2}" width="40" height="14" rx="3" fill="#374151"/><text x="0" y="${FH/2+8}" text-anchor="middle" font-size="8" fill="#d1d5db" font-family="serif" font-weight="700">Muggle</text>`:""}<text y="${c.muggle?NAME_Y+14:NAME_Y}" text-anchor="middle" font-size="12" fill="${c.deceased?"#9ca3af":"#1c0e04"}" font-family="serif" font-weight="700">${(c.name||"（未設定）").replace(/&/g,"&amp;")}</text>${c.kana?`<text y="${NAME_Y+14}" text-anchor="middle" font-size="9" fill="#78716c" font-family="serif">${c.kana.replace(/&/g,"&amp;")}</text>`:""}${ds?`<text y="${NAME_Y+(c.kana?28:14)}" text-anchor="middle" font-size="9" fill="#a16207" font-family="serif">${ds}</text>`:""}</g>`;}).join("");
     // タイトル領域（上部）
-    const TH=familyTitle?80:0;
-    const titleSVG=familyTitle?`<text x="${mnx+W/2}" y="${mny+52}" text-anchor="middle" font-size="38" fill="#5c3210" font-family="'Cinzel','Palatino Linotype',serif" font-weight="700" letter-spacing="6" opacity="0.92">${familyTitle.replace(/&/g,"&amp;")}</text><line x1="${mnx+W/2-120}" y1="${mny+64}" x2="${mnx+W/2+120}" y2="${mny+64}" stroke="#92400e" stroke-width="1.2" opacity="0.6"/>`:"";
+    const TH=familyTitle?100:0;
+    const titleSVG=familyTitle?`<text x="${mnx+W/2}" y="${mny+58}" text-anchor="middle" font-size="52" fill="#5c3210" font-family="'Cinzel','Palatino Linotype',serif" font-weight="700" letter-spacing="8" opacity="0.95">${familyTitle.replace(/&/g,"&amp;")}</text><line x1="${mnx+W/2-160}" y1="${mny+74}" x2="${mnx+W/2-18}" y2="${mny+74}" stroke="#92400e" stroke-width="1" opacity="0.7"/><polygon points="${mnx+W/2},${mny+68} ${mnx+W/2+8},${mny+74} ${mnx+W/2},${mny+80} ${mnx+W/2-8},${mny+74}" fill="#92400e" opacity="0.8"/><line x1="${mnx+W/2+18}" y1="${mny+74}" x2="${mnx+W/2+160}" y2="${mny+74}" stroke="#92400e" stroke-width="1" opacity="0.7"/>`:"";
     // 家紋・家訓領域（下部中央）
-    const BH=(familyCrest||familyMotto)?140:0;
-    const crestSize=80;
+    const BH=(familyCrest||familyMotto)?200:0;
+    const crestSize=120;
     const bottomY=mny+H+TH;
-    const crestSVG=familyCrest?`<image href="${familyCrest}" x="${mnx+W/2-crestSize/2}" y="${bottomY+14}" width="${crestSize}" height="${crestSize}" preserveAspectRatio="xMidYMid meet"/>`:"";
-    const mottoY=familyCrest?bottomY+14+crestSize+22:bottomY+40;
-    const mottoSVG=familyMotto?`<text x="${mnx+W/2}" y="${mottoY}" text-anchor="middle" font-size="16" fill="#78350f" font-family="'Palatino Linotype','EB Garamond',serif" font-style="italic" letter-spacing="2">「${familyMotto.replace(/&/g,"&amp;")}」</text>`:"";
+    const crestSVG=familyCrest?`<image href="${familyCrest}" x="${mnx+W/2-crestSize/2}" y="${bottomY+20}" width="${crestSize}" height="${crestSize}" preserveAspectRatio="xMidYMid meet"/>`:"";
+    const mottoY=familyCrest?bottomY+20+crestSize+36:bottomY+56;
+    const mottoSVG=familyMotto?`<text x="${mnx+W/2}" y="${mottoY}" text-anchor="middle" font-size="24" fill="#1c0e04" font-family="'Palatino Linotype','EB Garamond',serif" font-style="italic" letter-spacing="3">「${familyMotto.replace(/&/g,"&amp;")}」</text>`:"";
     const totalH=H+TH+BH;
     const viewY=mny-TH;
     return{s:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${mnx} ${viewY} ${W} ${totalH}" width="${W}" height="${totalH}" style="background:url(${BG_SRC}) center/contain repeat"><defs/>${titleSVG}${ls}${ms}${ns}${crestSVG}${mottoSVG}</svg>`,W,H:totalH,mnx,mny:viewY};
@@ -354,7 +354,7 @@ function App() {
       <style>{`html,body{overscroll-behavior:none;overflow:hidden;touch-action:none;margin:0;}`}</style>
       <header style={{background:"linear-gradient(135deg,#1c0800,#3b1a08 50%,#1c0800)",borderBottom:"2px solid #78350f",padding:"8px 12px",display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
         <button onClick={()=>setMenu(true)} style={{background:"none",border:"none",color:"#fbbf24",fontSize:22,cursor:"pointer",padding:"0 4px"}}>☰</button>
-        <span style={{flex:1,fontSize:12,color:"#fbbf24",letterSpacing:"0.05em",whiteSpace:"nowrap"}}>✦ Wizard Family Chronicle ✦</span>
+        <span style={{flex:1,fontSize:familyTitle?14:12,color:"#fbbf24",letterSpacing:"0.05em",whiteSpace:"nowrap",fontFamily:"serif",fontWeight:familyTitle?"700":"400",cursor:"pointer"}} onClick={()=>setFamilyOpen(true)} title="クリックでタイトル・家紋・家訓を設定">{familyTitle||"✦ Wizard Family Chronicle ✦"}</span>
         <button onClick={addChar} style={{background:"#92400e",color:"#fef3c7",border:"none",padding:"7px 12px",borderRadius:4,cursor:"pointer",fontFamily:"serif",fontSize:12}}>＋ 追加</button>
         {[["＋",()=>{const ns=Math.min(3,scaleR.current+0.25);setScale(ns);scaleR.current=ns;}],["－",()=>{const ns=Math.max(0.2,scaleR.current-0.25);setScale(ns);scaleR.current=ns;}],["⟳",()=>{setScale(1);setPan({x:0,y:0});scaleR.current=1;panR.current={x:0,y:0};}]].map(([l,fn])=>(
           <button key={l} onClick={fn} style={{background:"#2d1206",color:"#fbbf24",border:"1px solid #78350f",width:28,height:28,borderRadius:4,cursor:"pointer",fontSize:14,flexShrink:0}}>{l}</button>
@@ -396,8 +396,8 @@ function App() {
         <button style={MB} onClick={()=>importRef.current?.click()}>📂 データをインポート</button>
         <input ref={importRef} type="file" accept=".json" style={{display:"none"}} onChange={doImport}/>
         <button style={MBD} onClick={doReset}>⚠ データをリセット（全て）</button>
-        <div style={{color:"#a16207",fontSize:10,marginTop:14,marginBottom:6}}>家紋・家訓</div>
-        <button style={MB} onClick={()=>{setFamilyOpen(true);setMenu(false);}}>⚜ 家紋・家訓を設定</button>
+        <div style={{color:"#a16207",fontSize:10,marginTop:14,marginBottom:6}}>家紋・家訓・タイトル</div>
+        <button style={MB} onClick={()=>{setFamilyOpen(true);setMenu(false);}}>⚜ 家紋・家訓・タイトルを設定</button>
         <div style={{color:"#a16207",fontSize:10,marginTop:14,marginBottom:6}}>保存・共有</div>
         <button style={MB} onClick={()=>{doHTML();setMenu(false);}}>🌐 HTMLで保存</button>
         <button style={MB} onClick={()=>{doImg("png");setMenu(false);}}>🖼 PNG保存（高画質）</button>
@@ -417,8 +417,9 @@ function App() {
         </div>
         <label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:4}}>家訓</label>
         <input value={familyMotto} onChange={e=>setFamilyMotto(e.target.value)} style={{...IS,marginBottom:14}} placeholder="例：Toujours Pur"/>
-        <label style={{color:"#a16207",fontSize:10,display:"block",marginBottom:4}}>タイトル</label>
-        <input value={familyTitle} onChange={e=>setFamilyTitle(e.target.value)} style={IS} placeholder="例：The Coopers"/>
+        <label style={{color:"#fbbf24",fontSize:11,display:"block",marginBottom:2,fontWeight:"700"}}>★ 家系図タイトル（画像上部に大きく表示）</label>
+        <p style={{color:"#d1a054",fontSize:10,margin:"0 0 6px"}}>PNG保存・HTML保存時に家系図の上部中央に表示されます</p>
+        <input value={familyTitle} onChange={e=>setFamilyTitle(e.target.value)} style={{...IS,marginBottom:4}} placeholder="例：The Coopers"/>
         <button onClick={()=>setFamilyOpen(false)} style={{width:"100%",marginTop:14,background:"#92400e",color:"#fef3c7",border:"none",padding:"11px",borderRadius:6,cursor:"pointer",fontSize:14,fontWeight:"700"}}>保存</button>
       </div></>)}
       {bulkOpen&&(<><div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.6)",zIndex:400}} onClick={()=>setBulkOpen(false)}/><div style={{position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:"#2d1206",border:"2px solid #92400e",borderRadius:12,padding:"20px",zIndex:401,width:"min(90vw,400px)"}}><h3 style={{margin:"0 0 10px",color:"#fbbf24",fontSize:14}}>テキストで一括入力</h3><p style={{color:"#d1a054",fontSize:11,margin:"0 0 10px"}}>1行1キャラ。カンマ区切り：名前, フリガナ, 生年, 没年</p><textarea value={bulkText} onChange={e=>setBulkText(e.target.value)} style={{...IS,height:110,resize:"vertical"}} placeholder={"藤堂ミラ, Milla Tohdoh, 1978,\nフレッド・ウィーズリー, Fred Weasley, 1978, 1998"}/><div style={{display:"flex",gap:8,marginTop:12}}><button onClick={doBulk} style={{flex:1,background:"#92400e",color:"#fef3c7",border:"none",padding:"10px",borderRadius:6,cursor:"pointer",fontSize:13}}>追加</button><button onClick={()=>setBulkOpen(false)} style={{background:"none",color:"#92400e",border:"1px solid #92400e",padding:"10px 16px",borderRadius:6,cursor:"pointer",fontSize:13}}>キャンセル</button></div></div></>)}
