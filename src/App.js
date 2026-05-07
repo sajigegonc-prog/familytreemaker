@@ -324,7 +324,7 @@ const hasCrest=!!familyCrest,hasMotto=!!familyMotto;
     const BH=hasCrest&&hasMotto?320:hasCrest?200:hasMotto?100:0;
     const bottomY=mny+H+TH;
     const crestSVG=hasCrest?`<image href="${familyCrest}" x="${mnx+W/2-crestSize/2}" y="${bottomY+20}" width="${crestSize}" height="${crestSize}" preserveAspectRatio="xMidYMid meet"/>`:"";
-    const mottoY=hasCrest?bottomY+20+crestSize+8:bottomY+50;    const mottoSVG=hasMotto?`<text x="${mnx+W/2}" y="${mottoY}" text-anchor="middle" font-size="16" fill="#1c0e04" font-family="'Cinzel','Palatino Linotype',serif" font-weight="700" letter-spacing="3">${familyMotto.replace(/&/g,"&amp;")}</text>`:"";
+    const mottoY=hasCrest?bottomY+20+crestSize+20:bottomY+50;    const mottoSVG=hasMotto?`<text x="${mnx+W/2}" y="${mottoY}" text-anchor="middle" font-size="16" fill="#1c0e04" font-family="'Cinzel','Palatino Linotype',serif" font-weight="700" letter-spacing="3">${familyMotto.replace(/&/g,"&amp;")}</text>`:"";
     const totalH=H+TH+BH;
     const viewY=mny-TH;
     const bgRect=`<image href="${BG_SRC}" x="${mnx}" y="${viewY}" width="${W}" height="${totalH}" preserveAspectRatio="xMidYMid slice"/>`;
