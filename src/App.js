@@ -321,7 +321,7 @@ const onSvgPM=e=>{
     // 家紋・家訓領域（下部中央）
     const crestSize=120;
     const hasCrest=!!familyCrest,hasMotto=!!familyMotto;
-    const BH=hasCrest&&hasMotto?220:hasCrest?160:hasMotto?100:0;
+    const BH=hasCrest&&hasMotto?260:hasCrest?160:hasMotto?100:0;
     const bottomY=mny+H+TH;
     const crestSVG=hasCrest?`<image href="${familyCrest}" x="${mnx+W/2-crestSize/2}" y="${bottomY+20}" width="${crestSize}" height="${crestSize}" preserveAspectRatio="xMidYMid meet"/>`:"";
     const mottoY=hasCrest?bottomY+20+crestSize+30:bottomY+50;
