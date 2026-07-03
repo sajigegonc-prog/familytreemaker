@@ -1172,7 +1172,7 @@ function App() {
               maxWidth: "100%",
             }}
           >
-            ✦ Wizard Family Chronicle ✦
+            ✦ 家系図メーカー ✦
           </span>
         </div>
         <button
